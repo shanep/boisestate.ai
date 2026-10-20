@@ -1,0 +1,103 @@
+# Runs install.sh the way a student would on every system we expect students
+# to have, then checks the result with scripts/test-install.sh. It also runs
+# weekly, since the script downloads Node and Claude Code from other sites and
+# those can change under it.
+
+name: install
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - install.sh
+      - scripts/test-install.sh
+      - src/**
+      - dist/**
+      - bin/**
+      - hooks/**
+      - .claude-plugin/**
+      - .github/workflows/install.yml
+  pull_request:
+    paths:
+      - install.sh
+      - scripts/test-install.sh
+      - src/**
+      - dist/**
+      - bin/**
+      - hooks/**
+      - .claude-plugin/**
+      - .github/workflows/install.yml
+  schedule:
+    - cron: '0 14 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: install-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # The runners as GitHub ships them, with their own git and node.
+  runner:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS (Apple chip, zsh)
+            os: macos-latest
+            shell: /bin/zsh
+          - name: macOS (Intel, bash)
+            os: macos-15-intel
+            shell: /bin/bash
+          - name: Ubuntu runner (bash)
+            os: ubuntu-latest
+            shell: /bin/bash
+    env:
+      SHELL: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v7
+      - run: sh scripts/test-install.sh
+
+  # Bare Linux images as root, with no git, curl or node, or an old node.
+  container:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu 24.04 (bare)
+            image: ubuntu:24.04
+          - name: Debian 12 (Node 18 from apt)
+            image: debian:12
+            setup: apt-get update -qq && apt-get install -y -qq nodejs
+          - name: Fedora (bare)
+            image: fedora:latest
+    steps:
+      - uses: actions/checkout@v7
+      - if: matrix.setup
+        run: ${{ matrix.setup }}
+      - run: sh scripts/test-install.sh
+
+  # What most Windows students will use.
+  wsl:
+    name: WSL (Ubuntu 24.04)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v7
+      - uses: Vampire/setup-wsl@v7
+        with:
+          distribution: Ubuntu-24.04
+      - shell: wsl-bash {0}
+        run: |
+          cd "$(wslpath '${{ github.workspace }}')"
+          CI=true sh scripts/test-install.sh

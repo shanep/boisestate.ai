@@ -1,0 +1,4 @@
+# Shell scripts must keep LF line endings, even in a Windows checkout used
+# from WSL, or sh fails on the carriage returns.
+*.sh text eol=lf
+bin/* text eol=lf

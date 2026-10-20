@@ -187,7 +187,8 @@ install_packages() {
   fi
   # sudo asks for the password on the terminal itself, so stdin can be empty.
   if command -v apt-get >/dev/null 2>&1; then
-    $sudo apt-get update -qq </dev/null && $sudo apt-get install -y -qq "$@" </dev/null
+    $sudo apt-get update -qq </dev/null &&
+      $sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "$@" </dev/null
   elif command -v dnf >/dev/null 2>&1; then
     $sudo dnf install -y "$@" </dev/null
   elif command -v yum >/dev/null 2>&1; then
@@ -268,10 +269,15 @@ check_computer() {
       'No window? Run: xcode-select --install'
   fi
   if ! find_cmd git >/dev/null; then
-    install_packages git
+    install_packages git ca-certificates
     find_cmd git >/dev/null || die 'git did not install. Install it yourself and run this again.'
   fi
   ok "$(git --version)"
+
+  # Downloads need curl or wget. The one-line setup has curl, but a clone may not.
+  if ! command -v curl >/dev/null 2>&1 && ! command -v wget >/dev/null 2>&1; then
+    install_packages curl ca-certificates
+  fi
 }
 
 setup_node() {
