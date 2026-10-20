@@ -23,7 +23,8 @@ const HELP = `Usage: boisestate [claude args...]
 
 Runs Claude Code on boisestate.ai through a local bridge. Any args that are
 not a command below go to claude, so \`boisestate -c\` continues the last
-session. Use \`boisestate -- <args>\` to pass args that look like a command.
+session. Use \`boisestate -- <args>\` to pass args that look like a command,
+such as \`boisestate -- --help\` for claude's own help.
 
 Commands:
   login      Save your boisestate.ai API key (reads stdin when it is not a terminal)
@@ -35,7 +36,16 @@ Commands:
   help       Show this help
 `;
 
-const COMMANDS = new Set(['login', 'logout', 'install', 'usage', 'status', 'bridge', 'notices', 'help']);
+const COMMANDS = new Set([
+  'login',
+  'logout',
+  'install',
+  'usage',
+  'status',
+  'bridge',
+  'notices',
+  'help',
+]);
 
 /** The plugin root this bundle sits in (dist/boisestate.cjs, one folder down). */
 function pluginRoot(): string {
@@ -107,6 +117,10 @@ async function main(argv: readonly string[]): Promise<number> {
   const [first, ...rest] = argv;
   if (first === '--') {
     return runClaude(deps, rest);
+  }
+  if (first === '-h' || first === '--help') {
+    process.stdout.write(HELP);
+    return 0;
   }
   if (first === undefined || !COMMANDS.has(first)) {
     return runClaude(deps, argv);
