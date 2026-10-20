@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="196" viewBox="0 0 760 196" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<title>Cost of one question with one tool call</title>
+<rect width="760" height="196" rx="8" fill="#ffffff"/>
+<text x="24" y="28" fill="#1f2328" font-size="16" font-weight="600">Cost of one question with one tool call</text>
+<rect x="24" y="42" width="12" height="12" rx="3" fill="#2a78d6"/>
+<text x="44" y="52" fill="#59636e" font-size="13">The work (Opus 5.5)</text>
+<rect x="206.32000000000002" y="42" width="12" height="12" rx="3" fill="#eb6834"/>
+<text x="226.32000000000002" y="52" fill="#59636e" font-size="13">Auto mode approval checks (Sonnet 5)</text>
+<line x1="120" x2="120" y1="64" y2="150" stroke="#d1d9e0" stroke-width="1"/>
+<text x="120" y="168" fill="#59636e" font-size="12" text-anchor="middle">$0.00</text>
+<line x1="242.22222222222223" x2="242.22222222222223" y1="64" y2="150" stroke="#d1d9e0" stroke-width="1"/>
+<text x="242.22222222222223" y="168" fill="#59636e" font-size="12" text-anchor="middle">$0.20</text>
+<line x1="364.44444444444446" x2="364.44444444444446" y1="64" y2="150" stroke="#d1d9e0" stroke-width="1"/>
+<text x="364.44444444444446" y="168" fill="#59636e" font-size="12" text-anchor="middle">$0.40</text>
+<line x1="486.66666666666663" x2="486.66666666666663" y1="64" y2="150" stroke="#d1d9e0" stroke-width="1"/>
+<text x="486.66666666666663" y="168" fill="#59636e" font-size="12" text-anchor="middle">$0.60</text>
+<line x1="608.8888888888889" x2="608.8888888888889" y1="64" y2="150" stroke="#d1d9e0" stroke-width="1"/>
+<text x="608.8888888888889" y="168" fill="#59636e" font-size="12" text-anchor="middle">$0.80</text>
+<text x="108" y="91" fill="#1f2328" font-size="13" font-weight="600" text-anchor="end">Default mode</text>
+<path d="M120 72 H183.59377777777777 Q187.59377777777777 72 187.59377777777777 76 V96 Q187.59377777777777 100 183.59377777777777 100 H120 Z" fill="#2a78d6"/>
+<text x="195.59377777777777" y="91" fill="#1f2328" font-size="13" font-weight="600">$0.11</text>
+<text x="108" y="137" fill="#1f2328" font-size="13" font-weight="600" text-anchor="end">Auto mode</text>
+<rect x="120" y="118" width="67.59377777777777" height="28" fill="#2a78d6"/>
+<path d="M189.59377777777777 118 H586.9271111111111 Q590.9271111111111 118 590.9271111111111 122 V142 Q590.9271111111111 146 586.9271111111111 146 H189.59377777777777 Z" fill="#eb6834"/>
+<text x="598.9271111111111" y="137" fill="#1f2328" font-size="13" font-weight="600">$0.77</text>
+</svg>

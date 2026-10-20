@@ -10,6 +10,7 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
     "build": "node scripts/build.mjs",
+    "charts": "node scripts/charts.mjs",
     "typecheck": "tsc",
     "test": "vitest run",
     "nodash": "node scripts/nodash.mjs",

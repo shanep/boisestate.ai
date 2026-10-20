@@ -10,8 +10,8 @@ api-converse calls, then starts `claude` pointed at it. The bridge stops when
 
 Works on macOS and Linux with Node 22.3 or newer.
 
-- [Quickstart](docs/index.html): setup for students, step by step
-- [How it works](docs/how-it-works.html): the bridge, one turn in detail, and
+- [Quickstart](docs/quickstart.md): setup for students, step by step
+- [How it works](docs/how-it-works.md): the bridge, one turn in detail, and
   where your quota goes, with diagrams and charts
 
 ## Install
