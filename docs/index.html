@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quickstart - Claude Code on boisestate.ai</title>
+  <meta name="description" content="Run Claude Code on your boisestate.ai account in five steps.">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+  <script>try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}</script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="index.html"><img src="assets/logo.svg" alt="">boisestate.ai for Claude Code</a>
+  <nav>
+    <a href="index.html" aria-current="page">Quickstart</a>
+    <a href="how-it-works.html">How it works</a>
+    <a href="https://github.com/shanep/boisestate.ai">GitHub</a>
+  </nav>
+  <button class="theme-toggle" type="button" aria-label="Switch theme"></button>
+</header>
+
+<div class="hero">
+  <div class="inner">
+    <div>
+      <h1>Claude Code on your boisestate.ai account</h1>
+      <p>Use Claude Code for your projects without an Anthropic account. Every
+        request goes through boisestate.ai, so it comes out of your Boise State
+        quota. Setup takes about 5 minutes.</p>
+      <div class="pills">
+        <a class="pill primary" href="#steps"><svg class="icon"><use href="#i-play"></use></svg>Get started</a>
+        <a class="pill" href="how-it-works.html"><svg class="icon"><use href="#i-book"></use></svg>How it works</a>
+        <span class="pill"><svg class="icon"><use href="#i-laptop"></use></svg>macOS and Linux</span>
+      </div>
+    </div>
+    <img class="logo" src="assets/logo.svg" alt="">
+  </div>
+</div>
+
+<main>
+
+  <section class="card">
+    <h2><svg class="icon"><use href="#i-list"></use></svg>What you need</h2>
+    <div class="needs">
+      <div class="need">
+        <div class="badge"><svg class="icon"><use href="#i-laptop"></use></svg></div>
+        <div><strong>macOS or Linux</strong><span>On Windows use WSL, which is Linux. I have not tested it there yet.</span></div>
+      </div>
+      <div class="need">
+        <div class="badge"><svg class="icon"><use href="#i-server"></use></svg></div>
+        <div><strong>Node 22.3 or newer</strong><span>Check with <code>node --version</code>.</span></div>
+      </div>
+      <div class="need">
+        <div class="badge"><svg class="icon"><use href="#i-key"></use></svg></div>
+        <div><strong>A boisestate.ai API key</strong><span>You can make one in your <a href="https://boisestate.ai/settings">boisestate.ai settings</a>.</span></div>
+      </div>
+      <div class="need">
+        <div class="badge"><svg class="icon"><use href="#i-terminal"></use></svg></div>
+        <div><strong>Claude Code</strong><span>Step 1 installs it if you don't have it.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="steps">
+    <h2><svg class="icon"><use href="#i-play"></use></svg>Setup</h2>
+    <p class="lead">You only do this once. Open a terminal and work through the steps in order.</p>
+
+    <ol class="steps">
+
+      <li class="step">
+        <div class="num"><svg class="icon"><use href="#i-terminal"></use></svg><b>1</b></div>
+        <div>
+          <h3>Install Claude Code</h3>
+          <p>Skip this step if you already have it. You do <strong>not</strong> need to sign in
+            to Anthropic, so don't run <code>claude</code> yet.</p>
+          <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></pre></div>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="num"><svg class="icon"><use href="#i-plug"></use></svg><b>2</b></div>
+        <div>
+          <h3>Add the plugin</h3>
+          <p>The first command tells Claude Code where to find the plugin, and the second one
+            installs it.</p>
+          <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">claude plugin marketplace add shanep/boisestate.ai</span>
+<span class="out"><span class="ok">✔</span> Successfully added marketplace: boisestate-ai</span>
+<span class="prompt">$ </span><span class="cmd">claude plugin install boisestate@boisestate-ai</span>
+<span class="out"><span class="ok">✔</span> Successfully installed plugin: boisestate@boisestate-ai (scope: user)</span></pre></div>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="num"><svg class="icon"><use href="#i-download"></use></svg><b>3</b></div>
+        <div>
+          <h3>Install the <code>boisestate</code> command</h3>
+          <p>This puts a small <code>boisestate</code> command in <code>~/.local/bin</code>. It
+            finds the newest version of the plugin each time it runs, so plugin updates just work.</p>
+          <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">node ~/.claude/plugins/cache/boisestate-ai/boisestate/*/dist/boisestate.cjs install</span>
+<span class="out">Installed /Users/you/.local/bin/boisestate</span></pre></div>
+          <p>If it also says <code>~/.local/bin is not on your PATH</code>, add this line to the end
+            of <code>~/.zshrc</code> (macOS) or <code>~/.bashrc</code> (Linux), then open a new
+            terminal.</p>
+          <div class="term"><div class="bar"><i></i><i></i><i></i>~/.zshrc or ~/.bashrc</div><pre><span class="cmd">export PATH="$HOME/.local/bin:$PATH"</span></pre></div>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="num"><svg class="icon"><use href="#i-key"></use></svg><b>4</b></div>
+        <div>
+          <h3>Save your API key</h3>
+          <p>Paste your key when it asks. Nothing shows up while you paste, that is on purpose.</p>
+          <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">boisestate login</span>
+<span class="out">boisestate.ai API key:</span>
+<span class="out">Saved the key to the macOS login keychain.</span></pre></div>
+          <div class="callout danger">
+            <svg class="icon"><use href="#i-lock"></use></svg>
+            <p>Never paste your API key into a Claude chat, a commit or a file in your repo.
+              Anything you type into Claude goes to the model and into the session history, and
+              anyone with your key can spend your quota.</p>
+          </div>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="num"><svg class="icon"><use href="#i-play"></use></svg><b>5</b></div>
+        <div>
+          <h3>Start coding</h3>
+          <p>Go to your project and run <code>boisestate</code> instead of <code>claude</code>.</p>
+          <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">cd ~/my-project</span>
+<span class="prompt">$ </span><span class="cmd">boisestate</span></pre></div>
+          <div class="callout warn">
+            <svg class="icon"><use href="#i-alert"></use></svg>
+            <p>The first time, Claude Code asks you to pick a color theme and then asks if you
+              trust the folder. Make sure and pick <strong>Yes, I trust this folder</strong>. The
+              default is No, which just exits.</p>
+          </div>
+          <div class="callout good">
+            <svg class="icon"><use href="#i-check"></use></svg>
+            <p>That's it! You are all setup. <code>boisestate</code> takes the same args as
+              <code>claude</code>, so <code>boisestate -c</code> picks up your last conversation.</p>
+          </div>
+        </div>
+      </li>
+
+    </ol>
+  </section>
+
+  <section id="quota">
+    <h2><svg class="icon"><use href="#i-gauge"></use></svg>Watch your quota</h2>
+    <p class="lead">Every message costs real money out of your monthly boisestate.ai quota. Each
+      call to the model carries Claude Code's instructions and tool list, which is about 12,000
+      tokens before you type a word, so it adds up faster than you would think.</p>
+    <div class="grid">
+      <div class="tile">
+        <h3><svg class="icon"><use href="#i-refresh"></use></svg><code>/clear</code> between tasks</h3>
+        <p>The whole conversation is sent again on every call. Start fresh when you switch to
+          something new and each call stays small.</p>
+      </div>
+      <div class="tile">
+        <h3><svg class="icon"><use href="#i-chart"></use></svg><code>boisestate usage</code></h3>
+        <p>Shows what you have spent this month, by model and by day. Inside a session, run
+          <code>/boisestate:usage</code>.</p>
+      </div>
+      <div class="tile">
+        <h3><svg class="icon"><use href="#i-bell"></use></svg>Warnings at 80% and 100%</h3>
+        <p>Claude Code shows a warning at the end of a turn when your spend crosses 80% and then
+          100% of the quota.</p>
+      </div>
+      <div class="tile">
+        <h3><svg class="icon"><use href="#i-shield"></use></svg>No auto mode</h3>
+        <p><code>boisestate</code> turns auto mode off. Its safety checks cost about 6 times
+          more than the work itself, and they burned through a month of quota in under an
+          hour.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <svg class="icon"><use href="#i-info"></use></svg>
+      <p>The plugin's numbers are an estimate from its own log. The real numbers are on your
+        <a href="https://boisestate.ai/settings/usage">boisestate.ai usage page</a>.</p>
+    </div>
+  </section>
+
+  <section id="commands">
+    <h2><svg class="icon"><use href="#i-terminal"></use></svg>Commands</h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>boisestate</code></td><td>Start Claude Code on boisestate.ai</td></tr>
+          <tr><td><code>boisestate -c</code></td><td>Continue your last conversation</td></tr>
+          <tr><td><code>boisestate -p "question"</code></td><td>Ask one question and print the answer</td></tr>
+          <tr><td><code>boisestate usage</code></td><td>Show this month's spend</td></tr>
+          <tr><td><code>boisestate status</code></td><td>Show where your key is saved and if the command is installed</td></tr>
+          <tr><td><code>boisestate login</code></td><td>Save or replace your API key</td></tr>
+          <tr><td><code>boisestate logout</code></td><td>Remove your saved key</td></tr>
+          <tr><td><code>boisestate --help</code></td><td>Show every command</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="help">
+    <h2><svg class="icon"><use href="#i-help"></use></svg>Troubleshooting</h2>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-terminal"></use></svg><code>boisestate: command not found</code></summary>
+      <div>
+        <p><code>~/.local/bin</code> is not on your PATH. Add the <code>export PATH</code> line
+          from step 3 to your shell profile and open a new terminal.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-key"></use></svg>It says no API key is saved</summary>
+      <div>
+        <p>Run <code>boisestate login</code> and paste your key. Then run
+          <code>boisestate status</code> to check where it went.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-lock"></use></svg>Claude Code wants me to log in</summary>
+      <div>
+        <p>You ran <code>claude</code> instead of <code>boisestate</code>. Plain
+          <code>claude</code> talks to Anthropic and needs an Anthropic account. Quit and run
+          <code>boisestate</code>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-gauge"></use></svg>"Your boisestate.ai quota is used up"</summary>
+      <div>
+        <p>You have spent this month's quota, and boisestate.ai refuses every call until it
+          resets at the start of next month. There is nothing to fix on your end, so plan
+          accordingly.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-clock"></use></svg>"The backend did not respond within its time limit"</summary>
+      <div>
+        <p>boisestate.ai stops any single request after about 60 seconds. This mostly happens
+          when you ask for a very large answer at once. Ask for smaller pieces of work, or just
+          try again.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-laptop"></use></svg>Linux: where did my key go?</summary>
+      <div>
+        <p>On Linux the key goes in your keyring through <code>secret-tool</code>. If you
+          don't have <code>secret-tool</code>, it goes in
+          <code>~/.config/boisestate-ai/api-key</code>, a file only you can read. To use the
+          keyring on Ubuntu, install it and log in again:</p>
+        <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">sudo apt install libsecret-tools</span>
+<span class="prompt">$ </span><span class="cmd">boisestate login</span></pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-refresh"></use></svg>Updating the plugin</summary>
+      <div>
+        <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">claude plugin marketplace update boisestate-ai</span>
+<span class="prompt">$ </span><span class="cmd">claude plugin update boisestate@boisestate-ai</span></pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary><svg class="icon"><use href="#i-wrench"></use></svg>Removing everything</summary>
+      <div>
+        <div class="term"><div class="bar"><i></i><i></i><i></i>Terminal</div><pre><span class="prompt">$ </span><span class="cmd">boisestate logout</span>
+<span class="prompt">$ </span><span class="cmd">claude plugin uninstall boisestate@boisestate-ai</span>
+<span class="prompt">$ </span><span class="cmd">rm ~/.local/bin/boisestate</span></pre></div>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <a class="card" href="how-it-works.html" style="display:flex;align-items:center;gap:1rem;text-decoration:none;color:inherit">
+      <svg class="icon" style="width:2rem;height:2rem;color:var(--orange)"><use href="#i-layers"></use></svg>
+      <div>
+        <strong>Want to know what is going on under the hood?</strong><br>
+        <span style="color:var(--ink-2)">The how it works page has diagrams of every piece and
+          charts of where your quota goes.</span>
+      </div>
+      <svg class="icon" style="margin-left:auto;color:var(--blue)"><use href="#i-arrow"></use></svg>
+    </a>
+  </section>
+
+</main>
+
+<footer>
+  MIT License · <a href="https://github.com/shanep/boisestate.ai">Source on GitHub</a> ·
+  <a href="how-it-works.html">How it works</a>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

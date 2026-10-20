@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="boisestate.ai plugin logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b4fb8"/>
+      <stop offset="1" stop-color="#0a2a6b"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <!-- the bridge -->
+  <path d="M18 92 Q64 30 110 92" fill="none" stroke="#f26b2a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M14 92 H114" stroke="#f26b2a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M42 92 V66 M64 92 V58 M86 92 V66" stroke="#f26b2a" stroke-width="5" stroke-linecap="round"/>
+  <!-- the prompt -->
+  <path d="M30 26 L44 36 L30 46" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M52 46 H72" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+</svg>

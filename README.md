@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/assets/logo.svg" width="96" alt=""></p>
+
 # boisestate.ai
 
 A Claude Code plugin that runs Claude Code on [boisestate.ai](https://boisestate.ai)
@@ -8,22 +10,26 @@ api-converse calls, then starts `claude` pointed at it. The bridge stops when
 
 Works on macOS and Linux with Node 22.3 or newer.
 
+- [Quickstart](docs/index.html): setup for students, step by step
+- [How it works](docs/how-it-works.html): the bridge, one turn in detail, and
+  where your quota goes, with diagrams and charts
+
 ## Install
+
+You do not need an Anthropic account, so don't run `claude` and sign in first.
+Add the plugin:
 
 ```sh
 claude plugin marketplace add shanep/boisestate.ai
 claude plugin install boisestate@boisestate-ai
 ```
 
-Or in one step from inside Claude Code:
+Then install the `boisestate` command. It goes in `~/.local/bin` and finds the
+installed plugin each time it runs, so it keeps working after a plugin update.
 
+```sh
+node ~/.claude/plugins/cache/boisestate-ai/boisestate/*/dist/boisestate.cjs install
 ```
-/plugin install boisestate --marketplace shanep/boisestate.ai
-```
-
-Then run `/boisestate:setup` in a Claude Code session. It puts the
-`boisestate` command in `~/.local/bin`. The command finds the installed plugin
-each time it runs, so it keeps working after a plugin update.
 
 Last, save your API key in your own terminal:
 
@@ -34,6 +40,10 @@ boisestate login
 The key goes in the macOS keychain, or `secret-tool` on Linux (a file only
 you can read when `secret-tool` is missing). You can also pipe it in:
 `pbpaste | boisestate login`.
+
+The first time you run `boisestate` in a folder, Claude Code asks if you trust
+it. The answer defaults to "No, exit", so make sure and pick "Yes, I trust this
+folder".
 
 ## Running
 

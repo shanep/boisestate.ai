@@ -1,4 +1,4 @@
-// A small loopback HTTP server for the bridge, modeled on the OTLP receiver.
+// A small loopback HTTP server for the bridge.
 // It reads and parses the JSON body, checks the optional shared token, and
 // dispatches to a route handler that either answers with JSON once or switches
 // the response to a Server-Sent Events stream. Every error it answers with,
