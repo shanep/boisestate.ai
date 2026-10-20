@@ -1,0 +1,4 @@
+#!/bin/sh
+# Typecheck, test, and make sure dist/ matches the source, since the plugin
+# runs the committed bundle.
+exec npm run -s check

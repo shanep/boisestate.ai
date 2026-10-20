@@ -1,0 +1,13 @@
+{
+  "name": "boisestate",
+  "version": "0.1.0",
+  "description": "Run Claude Code on boisestate.ai through a local bridge, with quota warnings and a usage report",
+  "author": {
+    "name": "Shane K. Panter",
+    "email": "shanepanter@boisestate.edu"
+  },
+  "homepage": "https://github.com/shanep/boisestate.ai",
+  "repository": "https://github.com/shanep/boisestate.ai",
+  "license": "MIT",
+  "keywords": ["boisestate", "proxy", "gateway"]
+}

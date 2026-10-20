@@ -1,0 +1,29 @@
+{
+  "name": "boisestate-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Run Claude Code on boisestate.ai through a local bridge",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.3"
+  },
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc",
+    "test": "vitest run",
+    "nodash": "node scripts/nodash.mjs",
+    "validate": "claude plugin validate .",
+    "check": "npm run -s typecheck && npm run -s nodash && npm test && npm run -s build && git diff --exit-code -- dist"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.8",
+    "@types/node": "^22.20.5",
+    "esbuild": "^0.28.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
+  }
+}

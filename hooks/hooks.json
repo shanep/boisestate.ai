@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -s \"${BOISESTATE_NOTICE_FILE:-}\" ] && node \"${CLAUDE_PLUGIN_ROOT}/dist/boisestate.cjs\" notices || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
