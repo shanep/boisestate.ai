@@ -16,6 +16,19 @@ Works on macOS and Linux with Node 22.3 or newer.
 
 ## Install
 
+One line does all of it. It installs git, Node and Claude Code if they are
+missing, adds the plugin and the `boisestate` command, puts `~/.local/bin` on
+your PATH, and asks for your API key:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/shanep/boisestate.ai/master/install.sh | sh
+```
+
+It is safe to run again, and a second run updates the plugin. To see its
+options, end the line with `| sh -s -- --help` instead of `| sh`.
+
+### By hand
+
 You do not need an Anthropic account, so don't run `claude` and sign in first.
 Add the plugin:
 
@@ -38,7 +51,7 @@ boisestate login
 ```
 
 The key goes in the macOS keychain, or `secret-tool` on Linux (a file only
-you can read when `secret-tool` is missing). You can also pipe it in:
+you can read when `secret-tool` is missing or has no keyring). You can also pipe it in:
 `pbpaste | boisestate login`.
 
 The first time you run `boisestate` in a folder, Claude Code asks if you trust

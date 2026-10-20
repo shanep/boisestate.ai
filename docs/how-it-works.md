@@ -425,7 +425,8 @@ it knows the rates for, and it marks the rest as "no rate".
 | `~/.local/state/boisestate-ai/usage.jsonl` | One line per call: time, model, tokens in and out |
 | `~/.local/state/boisestate-ai/bridge.log` | Errors from the bridge, if any |
 | `~/.local/state/boisestate-ai/notices-<pid>.jsonl` | Quota warnings for one session, removed when it ends |
-| `~/.config/boisestate-ai/api-key` | Your key, only on Linux without `secret-tool` |
+| `~/.config/boisestate-ai/api-key` | Your key, only on Linux without a working `secret-tool` |
+| `~/.local/share/boisestate-ai/node` | Node, only when the setup script installed it for you. `~/.local/bin/node`, `npm` and `npx` link to it. |
 
 The folders follow `XDG_STATE_HOME` and `XDG_CONFIG_HOME` if you set them.
 `BOISESTATE_USAGE_LOG` moves the usage log.

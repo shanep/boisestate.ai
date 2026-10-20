@@ -1,10 +1,10 @@
 // Stores the boisestate.ai api key outside any settings file. macOS uses the
 // login keychain through `security`, Linux uses the Secret Service through
-// `secret-tool`, and a Linux box without secret-tool gets a file only the user
-// can read. BOISESTATE_API_KEY in the environment wins over all of them.
+// `secret-tool`, and a Linux box without secret-tool, or with one that has no
+// keyring running (WSL, ssh), gets a file only the user can read. BOISESTATE_API_KEY in the environment wins over all of them.
 
 import { spawnSync } from 'node:child_process';
-import { chmodSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 import type { Env, Paths } from './paths.js';
@@ -50,6 +50,22 @@ function keyFile(paths: Paths): string {
   return path.join(paths.configDir, 'api-key');
 }
 
+function readKeyFile(paths: Paths): string {
+  try {
+    return readFileSync(keyFile(paths), 'utf8');
+  } catch {
+    return '';
+  }
+}
+
+function writeKeyFile(paths: Paths, key: string): void {
+  const file = keyFile(paths);
+  mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
+  writeFileSync(file, `${key}\n`, { mode: 0o600 });
+  // writeFileSync only applies the mode to a new file.
+  chmodSync(file, 0o600);
+}
+
 function backendFor(deps: KeyStoreDeps): Backend {
   if (deps.platform === 'darwin') {
     return 'keychain';
@@ -69,7 +85,7 @@ export function describeStore(deps: KeyStoreDeps): string {
       return 'the macOS login keychain';
     }
     case 'secret-tool': {
-      return 'the Secret Service keyring';
+      return existsSync(keyFile(deps.paths)) ? keyFile(deps.paths) : 'the Secret Service keyring';
     }
     case 'file': {
       return keyFile(deps.paths);
@@ -100,14 +116,13 @@ export function readKey(deps: KeyStoreDeps): string | null {
     case 'secret-tool': {
       const result = deps.run('secret-tool', ['lookup', 'service', SERVICE]);
       stored = result.status === 0 ? result.stdout : '';
+      if (stored.trim() === '') {
+        stored = readKeyFile(deps.paths);
+      }
       break;
     }
     case 'file': {
-      try {
-        stored = readFileSync(keyFile(deps.paths), 'utf8');
-      } catch {
-        stored = '';
-      }
+      stored = readKeyFile(deps.paths);
       break;
     }
   }
@@ -116,10 +131,10 @@ export function readKey(deps: KeyStoreDeps): string | null {
 }
 
 /**
- * Saves the key. The key goes to `security` and `secret-tool` on stdin, so it
- * never shows up in another user's `ps`.
+ * Saves the key and returns where it went, in words. The key goes to `security`
+ * and `secret-tool` on stdin, so it never shows up in another user's `ps`.
  */
-export function storeKey(deps: KeyStoreDeps, key: string): void {
+export function storeKey(deps: KeyStoreDeps, key: string): string {
   switch (backendFor(deps)) {
     case 'keychain': {
       const line = [
@@ -138,7 +153,7 @@ export function storeKey(deps: KeyStoreDeps, key: string): void {
       if (result.status !== 0) {
         throw new Error('security could not save the key to the keychain.');
       }
-      return;
+      return describeStore(deps);
     }
     case 'secret-tool': {
       const result = deps.run(
@@ -147,17 +162,16 @@ export function storeKey(deps: KeyStoreDeps, key: string): void {
         key,
       );
       if (result.status !== 0) {
-        throw new Error('secret-tool could not save the key.');
+        // secret-tool is there but no keyring answered, so use the file.
+        writeKeyFile(deps.paths, key);
+        return keyFile(deps.paths);
       }
-      return;
+      rmSync(keyFile(deps.paths), { force: true });
+      return 'the Secret Service keyring';
     }
     case 'file': {
-      const file = keyFile(deps.paths);
-      mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
-      writeFileSync(file, `${key}\n`, { mode: 0o600 });
-      // writeFileSync only applies the mode to a new file.
-      chmodSync(file, 0o600);
-      return;
+      writeKeyFile(deps.paths, key);
+      return keyFile(deps.paths);
     }
   }
 }
@@ -171,6 +185,7 @@ export function deleteKey(deps: KeyStoreDeps): void {
     }
     case 'secret-tool': {
       deps.run('secret-tool', ['clear', 'service', SERVICE]);
+      rmSync(keyFile(deps.paths), { force: true });
       return;
     }
     case 'file': {

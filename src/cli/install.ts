@@ -18,6 +18,15 @@ export function shimScript(fallbackRoot: string): string {
   return `#!/usr/bin/env node
 // Written by \`boisestate install\`. It finds the installed boisestate plugin on
 // each run, so it keeps working when the plugin updates.
+const [major, minor] = process.versions.node.split('.').map(Number);
+if (major < 22 || (major === 22 && minor < 3)) {
+  process.stderr.write(
+    'boisestate: it needs Node 22.3 or newer, and \`node\` here is ' + process.version + '.\\n' +
+      'Run the install script again, or put a newer node first on your PATH.\\n',
+  );
+  process.exit(1);
+}
+
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');

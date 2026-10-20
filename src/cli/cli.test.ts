@@ -10,7 +10,7 @@ import { noticeLine } from '../bridge/quota-watch.js';
 import { installShim, onPath, PLUGIN_ID } from './install.js';
 import type { Run, RunResult } from './keychain.js';
 import { deleteKey, describeStore, readKey, storeKey } from './keychain.js';
-import { claudeArgs, claudeEnv } from './launch.js';
+import { claudeArgs, claudeEnv, pathWithNode } from './launch.js';
 import { hookOutput } from './notices.js';
 import { noticeFileFor, pathsFor } from './paths.js';
 import { formatUsage, usageReport } from './usage.js';
@@ -132,6 +132,22 @@ describe('keychain', () => {
     expect(readKey(deps)).toBeNull();
   });
 
+  it('uses the file when secret-tool has no keyring to talk to', async () => {
+    const home = await tempDir();
+    const fake = fakeRun((call) =>
+      call.args[0] === 'store' || call.args[0] === 'lookup'
+        ? { status: 1, stdout: '', missing: false }
+        : OK,
+    );
+    const deps = { env: {}, paths: pathsFor({}, home), platform: 'linux' as const, run: fake.run };
+    const file = path.join(home, '.config', 'boisestate-ai', 'api-key');
+    expect(storeKey(deps, 'k4')).toBe(file);
+    expect(readKey(deps)).toBe('k4');
+    expect(describeStore(deps)).toBe(file);
+    deleteKey(deps);
+    expect(readKey(deps)).toBeNull();
+  });
+
   it('throws when the keychain refuses the key', () => {
     const fake = fakeRun(() => ({ status: 1, stdout: '', missing: false }));
     expect(() => {
@@ -188,6 +204,15 @@ describe('claudeEnv', () => {
       ANTHROPIC_AUTH_TOKEN: 'tok',
       BOISESTATE_NOTICE_FILE: '/n.jsonl',
     });
+  });
+});
+
+describe('pathWithNode', () => {
+  it('puts the launcher node folder first, once', () => {
+    const join = (...parts: string[]): string => parts.join(path.delimiter);
+    expect(pathWithNode(join('/usr/bin', '/bin'), '/n/bin')).toBe(join('/n/bin', '/usr/bin', '/bin'));
+    expect(pathWithNode(join('/n/bin', '/bin'), '/n/bin')).toBe(join('/n/bin', '/bin'));
+    expect(pathWithNode(undefined, '/n/bin')).toBe('/n/bin');
   });
 });
 

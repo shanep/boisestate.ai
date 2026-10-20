@@ -15,13 +15,76 @@ takes about 5 minutes.
 | | |
 |---|---|
 | **macOS or Linux** | On Windows use WSL, which is Linux. I have not tested it there yet. |
-| **Node 22.3 or newer** | Check with `node --version`. |
 | **A boisestate.ai API key** | You can make one in your [boisestate.ai settings](https://boisestate.ai/settings). |
-| **Claude Code** | Step 1 installs it if you don't have it. |
+
+The setup installs everything else (Node and Claude Code) if you don't have it.
 
 ## Setup
 
-You only do this once. Open a terminal and work through the steps in order.
+You only do this once. Open a terminal (on Windows, the Ubuntu app from WSL)
+and paste this line:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/shanep/boisestate.ai/master/install.sh | sh
+```
+
+It works through 6 steps and tells you what it is doing at each one:
+
+1. **Checks your computer.** It installs git if you don't have it. On a Mac
+   that pops up a window asking to install the Command Line Tools. Click
+   Install, wait for it to finish, and run the line above again.
+2. **Node.** If yours is missing or older than 22.3, it puts a new one in your
+   home folder. It leaves the one you have alone.
+3. **Claude Code.** It installs it if you don't have it.
+4. **The plugin.** It installs the boisestate plugin, or updates it.
+5. **The `boisestate` command.** It goes in `~/.local/bin`, and the script adds
+   that folder to your PATH.
+6. **Your API key.** It opens your boisestate.ai settings page in the browser.
+   Copy your key and paste it into the terminal when it asks. Nothing shows up
+   while you paste, that is on purpose.
+
+> [!CAUTION]
+> Never paste your API key into a Claude chat, a commit or a file in your repo.
+> Anything you type into Claude goes to the model and into the session history,
+> and anyone with your key can spend your quota.
+
+When it is done you should see something like this:
+
+```text
+All set!
+  key: saved in the macOS login keychain
+  command: ~/.local/bin/boisestate
+  usage log: ~/.local/state/boisestate-ai/usage.jsonl
+```
+
+If it stops with a red `x`, read the message under it, fix that, and run the
+same line again. It is safe to run as many times as you want, since it skips
+the steps that already worked. If it says it changed your PATH, close the
+terminal and open a new one before going on.
+
+## Start coding
+
+Go to your project and run `boisestate` instead of `claude`.
+
+```sh
+cd ~/my-project
+boisestate
+```
+
+> [!WARNING]
+> The first time, Claude Code asks you to pick a color theme and then asks if
+> you trust the folder. Make sure and pick **Yes, I trust this folder**. The
+> default is No, which just exits.
+
+> [!TIP]
+> That's it! You are all setup. `boisestate` takes the same args as `claude`,
+> so `boisestate -c` picks up your last conversation.
+
+## Setup by hand
+
+You only need this if the script does not work on your computer, or if you
+want to see each step. You need Node 22.3 or newer for it, so check with
+`node --version` first.
 
 ### Step 1 - Install Claude Code
 
@@ -76,28 +139,7 @@ boisestate.ai API key:
 Saved the key to the macOS login keychain.
 ```
 
-> [!CAUTION]
-> Never paste your API key into a Claude chat, a commit or a file in your repo.
-> Anything you type into Claude goes to the model and into the session history,
-> and anyone with your key can spend your quota.
-
-### Step 5 - Start coding
-
-Go to your project and run `boisestate` instead of `claude`.
-
-```sh
-cd ~/my-project
-boisestate
-```
-
-> [!WARNING]
-> The first time, Claude Code asks you to pick a color theme and then asks if
-> you trust the folder. Make sure and pick **Yes, I trust this folder**. The
-> default is No, which just exits.
-
-> [!TIP]
-> That's it! You are all setup. `boisestate` takes the same args as `claude`,
-> so `boisestate -c` picks up your last conversation.
+Then go to [Start coding](#start-coding).
 
 ## Watch your quota
 
@@ -133,10 +175,29 @@ think.
 ## Troubleshooting
 
 <details>
+<summary>The setup stopped with an error</summary>
+
+Read the red `x` line and the lines under it, since they say what went wrong
+and what to do. Fix that and run the setup line again. If you are stuck, send
+your instructor everything the script printed.
+
+</details>
+
+<details>
 <summary><code>boisestate: command not found</code></summary>
 
-`~/.local/bin` is not on your PATH. Add the `export PATH` line from step 3 to
-your shell profile and open a new terminal.
+Open a new terminal first, since a terminal only reads your PATH when it
+starts. If it still happens, `~/.local/bin` is not on your PATH. Add the
+`export PATH` line from step 3 of the setup by hand to your shell profile and
+open a new terminal.
+
+</details>
+
+<details>
+<summary><code>boisestate: it needs Node 22.3 or newer</code></summary>
+
+An older `node` comes first on your PATH. Run the setup line again, then open
+a new terminal.
 
 </details>
 
@@ -178,8 +239,8 @@ work, or just try again.
 <summary>Linux: where did my key go?</summary>
 
 On Linux the key goes in your keyring through `secret-tool`. If you don't have
-`secret-tool`, it goes in `~/.config/boisestate-ai/api-key`, a file only you
-can read. To use the keyring on Ubuntu, install it and log in again:
+`secret-tool`, or it has no keyring to talk to (WSL and ssh usually don't), it
+goes in `~/.config/boisestate-ai/api-key`, a file only you can read. To use the keyring on Ubuntu, install it and log in again:
 
 ```sh
 sudo apt install libsecret-tools
@@ -190,6 +251,8 @@ boisestate login
 
 <details>
 <summary>Updating the plugin</summary>
+
+Run the setup line again. Or, by hand:
 
 ```sh
 claude plugin marketplace update boisestate-ai
@@ -204,8 +267,19 @@ claude plugin update boisestate@boisestate-ai
 ```sh
 boisestate logout
 claude plugin uninstall boisestate@boisestate-ai
+claude plugin marketplace remove boisestate-ai
 rm ~/.local/bin/boisestate
 ```
+
+If the setup installed Node for you, remove that too:
+
+```sh
+rm -rf ~/.local/share/boisestate-ai
+rm ~/.local/bin/node ~/.local/bin/npm ~/.local/bin/npx
+```
+
+Last, delete the `# Added by the boisestate.ai installer` lines from your
+shell profile (`~/.zshrc` or `~/.bashrc`).
 
 </details>
 

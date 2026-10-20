@@ -6,6 +6,7 @@ import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { appendFileSync, mkdirSync, rmSync } from 'node:fs';
 import { constants } from 'node:os';
+import path from 'node:path';
 
 import type { ConfigResult } from '../bridge/config.js';
 import { noticeLine } from '../bridge/quota-watch.js';
@@ -68,6 +69,16 @@ export function claudeEnv(
   };
 }
 
+/**
+ * PATH with the folder of the node running the launcher first. The plugin's
+ * hook runs `node`, and an older node earlier on PATH cannot run the bundle.
+ */
+export function pathWithNode(pathValue: string | undefined, nodeDir: string): string {
+  const entries = (pathValue ?? '').split(path.delimiter).filter((entry) => entry !== '');
+  const first = entries[0] === nodeDir ? entries : [nodeDir, ...entries];
+  return first.join(path.delimiter);
+}
+
 /** The exit code for a child that ended on a signal, the way a shell reports it. */
 function signalCode(signal: NodeJS.Signals): number {
   return 128 + constants.signals[signal];
@@ -116,7 +127,12 @@ export async function launch(options: LaunchOptions): Promise<number> {
   });
   const baseUrl = `http://${config.config.host}:${String(bridge.port)}`;
   const child = spawn(env['BOISESTATE_CLAUDE'] ?? 'claude', claudeArgs(options.userArgs), {
-    env: claudeEnv(env, baseUrl, token, noticeFile),
+    env: claudeEnv(
+      { ...env, PATH: pathWithNode(env['PATH'], path.dirname(process.execPath)) },
+      baseUrl,
+      token,
+      noticeFile,
+    ),
     stdio: 'inherit',
   });
   // Ctrl-C goes to the whole foreground group, and Claude Code handles its own.

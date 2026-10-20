@@ -58,8 +58,7 @@ async function login(deps: KeyStoreDeps): Promise<number> {
     process.stderr.write('boisestate: no key given, nothing saved.\n');
     return 1;
   }
-  storeKey(deps, key);
-  process.stdout.write(`Saved the key to ${describeStore(deps)}.\n`);
+  process.stdout.write(`Saved the key to ${storeKey(deps, key)}.\n`);
   return 0;
 }
 
