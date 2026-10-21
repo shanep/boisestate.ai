@@ -33,15 +33,15 @@ You do not need an Anthropic account, so don't run `claude` and sign in first.
 Add the plugin:
 
 ```sh
-claude plugin marketplace add shanep/boisestate.ai
-claude plugin install boisestate@boisestate-ai
+claude plugin marketplace add shanep/claude-plugins
+claude plugin install boisestate@shanep
 ```
 
 Then install the `boisestate` command. It goes in `~/.local/bin` and finds the
 installed plugin each time it runs, so it keeps working after a plugin update.
 
 ```sh
-node ~/.claude/plugins/cache/boisestate-ai/boisestate/*/dist/boisestate.cjs install
+node ~/.claude/plugins/cache/shanep/boisestate/*/dist/boisestate.cjs install
 ```
 
 Last, save your API key in your own terminal:

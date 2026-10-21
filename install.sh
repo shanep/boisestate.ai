@@ -14,9 +14,9 @@
 
 set -eu
 
-REPO_URL='https://github.com/shanep/boisestate.ai.git'
-MARKETPLACE='boisestate-ai'
-PLUGIN='boisestate@boisestate-ai'
+REPO_URL='https://github.com/shanep/claude-plugins.git'
+MARKETPLACE='shanep'
+PLUGIN='boisestate@shanep'
 KEY_URL='https://boisestate.ai/settings'
 NODE_DIST='https://nodejs.org/dist/latest-v24.x'
 CLAUDE_INSTALLER='https://claude.ai/install.sh'

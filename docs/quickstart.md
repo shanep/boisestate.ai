@@ -101,15 +101,15 @@ The first command tells Claude Code where to find the plugin, and the second
 one installs it.
 
 ```sh
-claude plugin marketplace add shanep/boisestate.ai
-claude plugin install boisestate@boisestate-ai
+claude plugin marketplace add shanep/claude-plugins
+claude plugin install boisestate@shanep
 ```
 
 You should see:
 
 ```text
-✔ Successfully added marketplace: boisestate-ai
-✔ Successfully installed plugin: boisestate@boisestate-ai (scope: user)
+✔ Successfully added marketplace: shanep
+✔ Successfully installed plugin: boisestate@shanep (scope: user)
 ```
 
 ### Step 3 - Install the `boisestate` command
@@ -118,7 +118,7 @@ This puts a small `boisestate` command in `~/.local/bin`. It finds the newest
 version of the plugin each time it runs, so plugin updates just work.
 
 ```sh
-node ~/.claude/plugins/cache/boisestate-ai/boisestate/*/dist/boisestate.cjs install
+node ~/.claude/plugins/cache/shanep/boisestate/*/dist/boisestate.cjs install
 ```
 
 If it also says `~/.local/bin is not on your PATH`, add this line to the end of
@@ -255,8 +255,8 @@ boisestate login
 Run the setup line again. Or, by hand:
 
 ```sh
-claude plugin marketplace update boisestate-ai
-claude plugin update boisestate@boisestate-ai
+claude plugin marketplace update shanep
+claude plugin update boisestate@shanep
 ```
 
 </details>
@@ -266,8 +266,8 @@ claude plugin update boisestate@boisestate-ai
 
 ```sh
 boisestate logout
-claude plugin uninstall boisestate@boisestate-ai
-claude plugin marketplace remove boisestate-ai
+claude plugin uninstall boisestate@shanep
+claude plugin marketplace remove shanep
 rm ~/.local/bin/boisestate
 ```
 

@@ -3,8 +3,8 @@
 # behind. CI runs it on macOS, Linux and WSL. It changes the home folder it runs
 # in, so only run it on a throwaway machine or with HOME pointed somewhere else.
 #
-# It installs the plugin from this checkout instead of GitHub, so it tests the
-# commit in front of it. With --from-github it runs the quickstart's one-line
+# It installs the plugin from a copy of this checkout instead of GitHub, so it
+# tests the commit in front of it. With --from-github it runs the quickstart's one-line
 # curl command instead, which tests what students get right now.
 
 set -eu
@@ -15,7 +15,20 @@ from_github=0
 if [ "${1:-}" = --from-github ]; then
   from_github=1
 else
-  BOISESTATE_MARKETPLACE=$root
+  # Claude Code installs plugins from a marketplace, so wrap the checkout in a
+  # throwaway one with the same name as the real shanep/claude-plugins.
+  market=$(mktemp -d)
+  mkdir -p "$market/.claude-plugin" "$market/boisestate"
+  (cd "$root" && tar cf - --exclude .git --exclude node_modules .) |
+    (cd "$market/boisestate" && tar xf -)
+  cat >"$market/.claude-plugin/marketplace.json" <<'EOF'
+{
+  "name": "shanep",
+  "owner": { "name": "Shane K. Panter" },
+  "plugins": [{ "name": "boisestate", "source": "./boisestate" }]
+}
+EOF
+  BOISESTATE_MARKETPLACE=$market
   export BOISESTATE_MARKETPLACE
 fi
 
@@ -96,9 +109,9 @@ export PATH
 
 section 'Claude Code has the plugin'
 claude plugin list </dev/null | tee "$HOME/plugins.txt"
-grep -q 'boisestate@boisestate-ai' "$HOME/plugins.txt" || fail 'the plugin is not installed'
+grep -q 'boisestate@shanep' "$HOME/plugins.txt" || fail 'the plugin is not installed'
 if [ "$from_github" = 1 ]; then
-  claude plugin marketplace list </dev/null | grep -q 'github.com/shanep/boisestate.ai' ||
+  claude plugin marketplace list </dev/null | grep -q 'github.com/shanep/claude-plugins' ||
     fail 'the plugin did not come from GitHub'
 fi
 

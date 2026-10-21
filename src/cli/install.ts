@@ -7,7 +7,7 @@ import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 /** The plugin's id in Claude Code's installed plugin list. */
-export const PLUGIN_ID = 'boisestate@boisestate-ai';
+export const PLUGIN_ID = 'boisestate@shanep';
 
 /**
  * The script `boisestate install` writes. It runs the installed plugin's
