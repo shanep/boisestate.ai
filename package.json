@@ -11,6 +11,7 @@
     "prepare": "git config core.hooksPath .githooks || true",
     "build": "node scripts/build.mjs",
     "charts": "node scripts/charts.mjs",
+    "icon": "rsvg-convert --width 1024 --height 1024 --output .claude-plugin/icon.png scripts/icon/icon.svg",
     "typecheck": "tsc",
     "test": "vitest run",
     "nodash": "node scripts/nodash.mjs",

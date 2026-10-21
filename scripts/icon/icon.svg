@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- The plugin icon: a bridge arch over a terminal prompt, with a spark at
+       the top. Rerender .claude-plugin/icon.png with: npm run icon -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c4fd8"/>
+      <stop offset="0.55" stop-color="#0f2f8a"/>
+      <stop offset="1" stop-color="#081a52"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="0.3" cy="0.2" r="0.8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="arch" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff5a1f"/>
+      <stop offset="0.5" stop-color="#ff9a2e"/>
+      <stop offset="1" stop-color="#ff5a1f"/>
+    </linearGradient>
+    <radialGradient id="spark" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff4d6"/>
+      <stop offset="0.35" stop-color="#ffc24a"/>
+      <stop offset="1" stop-color="#ff6a13"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#ffffff" stroke-width="2"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <clipPath id="clip">
+      <rect width="1024" height="1024" rx="224"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#clip)">
+    <rect width="1024" height="1024" fill="url(#tile)"/>
+    <rect width="1024" height="1024" fill="url(#grid)" opacity="0.07"/>
+    <rect width="1024" height="1024" fill="url(#shine)"/>
+
+    <!-- everything but the tile, nudged up to sit in the middle -->
+    <g transform="translate(0 -44)">
+      <!-- hangers from the arch down to the deck -->
+      <clipPath id="under">
+        <path d="M150 800C250 310 774 310 874 800Z"/>
+      </clipPath>
+      <g clip-path="url(#under)" stroke="#9fb6ff" stroke-width="14" stroke-opacity="0.55">
+        <path d="M250 300V800M318 300V800M706 300V800M774 300V800"/>
+      </g>
+
+      <!-- arch, with a soft glow under it -->
+      <path d="M150 800C250 310 774 310 874 800" fill="none" stroke="#ff7a1a" stroke-width="72"
+            filter="url(#glow)" opacity="0.6"/>
+      <path d="M150 800C250 310 774 310 874 800" fill="none" stroke="url(#arch)" stroke-width="64"/>
+
+      <!-- deck -->
+      <path d="M104 800H920" stroke="#e6edff" stroke-width="44" stroke-linecap="round"/>
+
+      <!-- terminal prompt under the arch -->
+      <path d="M388 596L476 662L388 728" fill="none" stroke="#ffffff" stroke-width="52"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M532 728H640" stroke="#ffffff" stroke-width="52" stroke-linecap="round"/>
+
+      <!-- spark at the top of the arch -->
+      <circle cx="512" cy="432" r="110" fill="#ffb03a" filter="url(#glow)" opacity="0.55"/>
+      <path d="M512 304Q531 413 640 432Q531 451 512 560Q493 451 384 432Q493 413 512 304Z"
+            fill="url(#spark)"/>
+      <path d="M770 196Q776 234 814 240Q776 246 770 284Q764 246 726 240Q764 234 770 196Z"
+            fill="#ffd27a"/>
+    </g>
+
+    <!-- thin rim so the tile holds its edge on a dark page -->
+    <rect x="3" y="3" width="1018" height="1018" rx="221" fill="none" stroke="#ffffff"
+          stroke-opacity="0.16" stroke-width="6"/>
+  </g>
+</svg>

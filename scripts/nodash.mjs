@@ -9,12 +9,17 @@ const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' })
   .filter((file) => file !== '' && !file.endsWith('package-lock.json'));
 let found = false;
 for (const file of files) {
-  let text;
+  let bytes;
   try {
-    text = readFileSync(file, 'utf8');
+    bytes = readFileSync(file);
   } catch {
     continue;
   }
+  // Skip binary files like the icon, whose bytes can decode to a dash by chance.
+  if (bytes.includes(0)) {
+    continue;
+  }
+  const text = bytes.toString('utf8');
   for (const [index, line] of text.split('\n').entries()) {
     if (DASHES.test(line)) {
       console.error(`${file}:${String(index + 1)}: use a comma, colon or new sentence instead of a dash`);
