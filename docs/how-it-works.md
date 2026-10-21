@@ -30,26 +30,26 @@ Claude Code makes goes to the bridge, and the bridge sends it on to
 boisestate.ai with your API key.
 
 ```mermaid
-flowchart TB
+flowchart LR
   subgraph computer["Your computer"]
     you(["You"])
-    launcher["<b>boisestate</b><br/>reads the key, starts both"]
     keychain[("<b>Keychain</b><br/>your API key")]
-    claude["<b>Claude Code</b><br/>pointed at the bridge"]
+    launcher["<b>boisestate</b><br/>reads the key,<br/>starts both"]
+    subgraph claude["Claude Code, pointed at the bridge"]
+      hook["<b>Stop hook</b><br/>shows quota warnings"]
+    end
     bridge["<b>Bridge</b><br/>127.0.0.1, random port"]
     log[("<b>usage.jsonl</b><br/>one line per call")]
-    hook["<b>Stop hook</b><br/>shows quota warnings"]
     you -- runs --> launcher
     keychain -- key --> launcher
     launcher -- starts --> claude
     launcher -- starts --> bridge
-    claude <-->|"requests and replies"| bridge
+    claude <-->|"requests<br/>and replies"| bridge
     bridge -- "logs each call" --> log
     bridge -. "notice file" .-> hook
-    hook -. warning .-> claude
   end
   api["<b>boisestate.ai</b><br/>Claude, GPT and Gemma"]
-  bridge <-->|"requests with your key"| api
+  bridge <-->|"requests<br/>with your key"| api
 
   classDef blue fill:#2a78d6,stroke:#1b4fb8,color:#ffffff
   classDef orange fill:#eb6834,stroke:#b84a1d,color:#ffffff
