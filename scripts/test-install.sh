@@ -21,11 +21,13 @@ section() {
   printf '\n==== %s\n' "$*"
 }
 
+# --skip-login, since a runner can have a terminal (WSL does) and the key
+# prompt would wait on it forever. The key gets its own test below.
 section 'First run'
-sh "$root/install.sh" </dev/null
+sh "$root/install.sh" --skip-login </dev/null
 
 section 'Second run, which should skip everything'
-sh "$root/install.sh" </dev/null >"$HOME/second-run.log" 2>&1 || {
+sh "$root/install.sh" --skip-login </dev/null >"$HOME/second-run.log" 2>&1 || {
   cat "$HOME/second-run.log"
   fail 'the second run failed'
 }
