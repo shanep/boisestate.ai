@@ -1,0 +1,46 @@
+# Runs scripts/test-live.mjs against the real boisestate.ai with the key in the
+# BOISESTATE_API_KEY secret. It also runs daily, since the backend can change
+# under the bridge. Each run spends a few cents of that key's quota, so it skips
+# pull requests and pushes that do not touch the plugin.
+
+name: live
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - src/**
+      - dist/**
+      - bin/**
+      - hooks/**
+      - .claude-plugin/**
+      - scripts/test-live.mjs
+      - .github/workflows/live.yml
+  schedule:
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: live-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    name: boisestate.ai
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install Claude Code
+        run: |
+          curl -fsSL https://claude.ai/install.sh | bash
+          echo "$HOME/.local/bin" >>"$GITHUB_PATH"
+      - run: node scripts/test-live.mjs
+        env:
+          BOISESTATE_API_KEY: ${{ secrets.BOISESTATE_API_KEY }}

@@ -15,6 +15,7 @@
     "test": "vitest run",
     "nodash": "node scripts/nodash.mjs",
     "validate": "claude plugin validate .",
+    "live": "node scripts/test-live.mjs",
     "check": "npm run -s typecheck && npm run -s nodash && npm test && npm run -s build && git diff --exit-code -- dist"
   },
   "dependencies": {
