@@ -1,11 +1,8 @@
 #!/bin/sh
-# Validate the plugin manifest, then typecheck, test, and make sure dist/
-# matches the source, since the plugin runs the committed bundle. Every push
-# to master goes straight to students, so this is the real gate.
+# Validate the plugin, then typecheck, test, and make sure dist/ matches the
+# source, since the plugin runs the committed bundle. Every push to master goes
+# straight to students, so this is the real gate. The validate script skips
+# itself when claude is not installed.
 set -e
-if command -v claude >/dev/null 2>&1; then
-  npm run -s validate
-else
-  echo 'pre-commit: claude is not installed, so skipping plugin validate.' >&2
-fi
+npm run -s validate
 exec npm run -s check
