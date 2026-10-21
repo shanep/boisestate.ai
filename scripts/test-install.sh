@@ -4,13 +4,20 @@
 # in, so only run it on a throwaway machine or with HOME pointed somewhere else.
 #
 # It installs the plugin from this checkout instead of GitHub, so it tests the
-# commit in front of it.
+# commit in front of it. With --from-github it runs the quickstart's one-line
+# curl command instead, which tests what students get right now.
 
 set -eu
 
 root=$(cd "$(dirname "$0")/.." && pwd)
-BOISESTATE_MARKETPLACE=$root
-export BOISESTATE_MARKETPLACE
+url=https://raw.githubusercontent.com/shanep/boisestate.ai/master/install.sh
+from_github=0
+if [ "${1:-}" = --from-github ]; then
+  from_github=1
+else
+  BOISESTATE_MARKETPLACE=$root
+  export BOISESTATE_MARKETPLACE
+fi
 
 fail() {
   printf '\nFAIL: %s\n' "$*" >&2
@@ -23,11 +30,21 @@ section() {
 
 # --skip-login, since a runner can have a terminal (WSL does) and the key
 # prompt would wait on it forever. The key gets its own test below.
+run_install() {
+  if [ "$from_github" = 1 ]; then
+    # sh exits 0 when the download is empty, so check the download first.
+    curl -fsSI "$url" >/dev/null || fail "cannot download $url"
+    curl -fsSL "$url" | sh -s -- --skip-login
+  else
+    sh "$root/install.sh" --skip-login </dev/null
+  fi
+}
+
 section 'First run'
-sh "$root/install.sh" --skip-login </dev/null
+run_install
 
 section 'Second run, which should skip everything'
-sh "$root/install.sh" --skip-login </dev/null >"$HOME/second-run.log" 2>&1 || {
+run_install >"$HOME/second-run.log" 2>&1 || {
   cat "$HOME/second-run.log"
   fail 'the second run failed'
 }
@@ -80,6 +97,10 @@ export PATH
 section 'Claude Code has the plugin'
 claude plugin list </dev/null | tee "$HOME/plugins.txt"
 grep -q 'boisestate@boisestate-ai' "$HOME/plugins.txt" || fail 'the plugin is not installed'
+if [ "$from_github" = 1 ]; then
+  claude plugin marketplace list </dev/null | grep -q 'github.com/shanep/boisestate.ai' ||
+    fail 'the plugin did not come from GitHub'
+fi
 
 # Only in CI, since on a Mac this would replace the real key in your keychain.
 if [ -n "${CI:-}" ]; then

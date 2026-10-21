@@ -86,6 +86,29 @@ jobs:
         run: ${{ matrix.setup }}
       - run: sh scripts/test-install.sh
 
+  # The quickstart's one-line curl command, against what is on GitHub now.
+  # It skips pull requests, since it never sees their changes.
+  one-line:
+    name: One-line setup from GitHub (${{ matrix.name }})
+    if: github.event_name != 'pull_request'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS
+            os: macos-latest
+            shell: /bin/zsh
+          - name: Ubuntu
+            os: ubuntu-latest
+            shell: /bin/bash
+    env:
+      SHELL: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v7
+      - run: sh scripts/test-install.sh --from-github
+
   # What most Windows students will use.
   wsl:
     name: WSL (Ubuntu 24.04)
