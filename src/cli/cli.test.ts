@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 import { noticeLine } from '../bridge/quota-watch.js';
 
-import { installShim, onPath, PLUGIN_ID } from './install.js';
+import { installShim, pathProblem, PLUGIN_ID } from './install.js';
 import type { Run, RunResult } from './keychain.js';
 import { deleteKey, describeStore, readKey, storeKey } from './keychain.js';
 import { claudeArgs, claudeEnv, pathWithNode } from './launch.js';
@@ -260,10 +260,27 @@ describe('usage report', () => {
 });
 
 describe('install', () => {
-  it('checks PATH by folder', () => {
-    expect(onPath('/a/bin', ['/x', '/a/bin/'].join(path.delimiter))).toBe(true);
-    expect(onPath('/a/bin', '/x')).toBe(false);
-    expect(onPath('/a/bin', undefined)).toBe(false);
+  it('checks that the command name finds the file it wrote', async () => {
+    const root = await tempDir();
+    const ours = path.join(root, 'ours');
+    const other = path.join(root, 'other');
+    const plugin = path.join(root, 'plugin', 'bin');
+    for (const dir of [ours, other, plugin]) {
+      await mkdir(dir, { recursive: true });
+      await writeFile(path.join(dir, 'boisestate'), '#!/bin/sh\n', { mode: 0o755 });
+    }
+    const file = path.join(ours, 'boisestate');
+    const pathOf = (...dirs: string[]): string => dirs.join(path.delimiter);
+
+    expect(pathProblem(file, pathOf('/x', `${ours}/`))).toBeNull();
+    expect(pathProblem(file, pathOf('/x'))).toEqual({ kind: 'not-on-path', dir: ours });
+    expect(pathProblem(file, undefined)).toEqual({ kind: 'not-on-path', dir: ours });
+    expect(pathProblem(file, pathOf(other, ours))).toEqual({
+      kind: 'shadowed',
+      by: path.join(other, 'boisestate'),
+    });
+    expect(pathProblem(file, pathOf(ours, other))).toBeNull();
+    expect(pathProblem(file, pathOf(plugin, ours), [plugin])).toBeNull();
   });
 
   it('writes a command that runs the installed plugin, or the fallback', async () => {

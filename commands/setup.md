@@ -7,7 +7,8 @@ Set up the `boisestate` command for the user:
 1. Run `boisestate install` to write the command to `~/.local/bin/boisestate`.
    The plugin puts `boisestate` on the Bash tool's PATH, but not the user's.
    If it says the folder is not on the PATH, tell the user which line to add
-   to their shell profile.
+   to their shell profile. If it says another `boisestate` runs instead, tell
+   them to put `~/.local/bin` ahead of that folder or remove the other one.
 2. Run `boisestate status` to see whether a key is saved. It never prints the
    key.
 3. If no key is saved, tell the user to run `boisestate login` in their own

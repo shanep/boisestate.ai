@@ -9,7 +9,7 @@ import process from 'node:process';
 import { configFromEnv } from '../bridge/config.js';
 
 import { startBridge } from './bridge.js';
-import { installShim, onPath } from './install.js';
+import { installShim, pathProblem } from './install.js';
 import { deleteKey, describeStore, readKey, run, storeKey } from './keychain.js';
 import type { KeyStoreDeps } from './keychain.js';
 import { launch } from './launch.js';
@@ -52,6 +52,11 @@ function pluginRoot(): string {
   return path.resolve(__dirname, '..');
 }
 
+/** The plugin's bin/ folder, which is on Claude Code's PATH but not the user's. */
+function pluginBin(): string {
+  return path.join(pluginRoot(), 'bin');
+}
+
 async function login(deps: KeyStoreDeps): Promise<number> {
   const key = (await readSecret('boisestate.ai API key: ')).trim();
   if (key === '') {
@@ -76,7 +81,14 @@ function status(deps: KeyStoreDeps): string {
   const shim = path.join(dir, 'boisestate');
   let command = 'not installed, run `boisestate install`';
   if (existsSync(shim)) {
-    command = onPath(dir, deps.env['PATH']) ? shim : `${shim} (${dir} is not on your PATH)`;
+    const problem = pathProblem(shim, deps.env['PATH'], [pluginBin()]);
+    if (problem === null) {
+      command = shim;
+    } else if (problem.kind === 'not-on-path') {
+      command = `${shim} (${dir} is not on your PATH)`;
+    } else {
+      command = `${shim} (${problem.by} runs instead, it comes first on your PATH)`;
+    }
   }
   return [`key: ${where}`, `command: ${command}`, `usage log: ${deps.paths.usageLog}`].join('\n');
 }
@@ -137,8 +149,14 @@ async function main(argv: readonly string[]): Promise<number> {
       const dir = rest[0] ?? path.join(os.homedir(), '.local', 'bin');
       const file = installShim(dir, pluginRoot());
       process.stdout.write(`Installed ${file}\n`);
-      if (!onPath(dir, env['PATH'])) {
+      const problem = pathProblem(file, env['PATH'], [pluginBin()]);
+      if (problem?.kind === 'not-on-path') {
         process.stdout.write(`${dir} is not on your PATH. Add it in your shell profile.\n`);
+      } else if (problem?.kind === 'shadowed') {
+        process.stdout.write(
+          `${problem.by} runs instead, since it comes first on your PATH.\n` +
+            `Put ${dir} ahead of it in your shell profile, or remove it.\n`,
+        );
       }
       return 0;
     }

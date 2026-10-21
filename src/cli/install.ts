@@ -3,7 +3,7 @@
 // install folder changes with every plugin update, so the command it writes
 // looks up the installed plugin each time it runs instead of linking to one.
 
-import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
+import { accessSync, chmodSync, constants, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 /** The plugin's id in Claude Code's installed plugin list. */
@@ -76,9 +76,44 @@ export function installShim(dir: string, fallbackRoot: string): string {
   return file;
 }
 
-/** True when dir is one of PATH's folders. */
-export function onPath(dir: string, pathValue: string | undefined): boolean {
-  return (pathValue ?? '')
-    .split(path.delimiter)
-    .some((entry) => entry !== '' && path.resolve(entry) === path.resolve(dir));
+
+/** Why typing the command would not run the file `boisestate install` wrote. */
+export type PathProblem =
+  | { readonly kind: 'not-on-path'; readonly dir: string }
+  | { readonly kind: 'shadowed'; readonly by: string };
+
+function isCommand(file: string): boolean {
+  try {
+    accessSync(file, constants.X_OK);
+    return statSync(file).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Checks that the command name finds file: that its folder is on PATH and no
+ * other command with the same name comes first. It passes over the folders in
+ * skip, such as the plugin's own bin/, which only Claude Code's Bash tool has.
+ */
+export function pathProblem(
+  file: string,
+  pathValue: string | undefined,
+  skip: readonly string[] = [],
+): PathProblem | null {
+  const dir = path.resolve(path.dirname(file));
+  const skipped = new Set(skip.map((entry) => path.resolve(entry)));
+  for (const entry of (pathValue ?? '').split(path.delimiter)) {
+    if (entry === '' || skipped.has(path.resolve(entry))) {
+      continue;
+    }
+    if (path.resolve(entry) === dir) {
+      return null;
+    }
+    const other = path.join(path.resolve(entry), path.basename(file));
+    if (isCommand(other)) {
+      return { kind: 'shadowed', by: other };
+    }
+  }
+  return { kind: 'not-on-path', dir };
 }

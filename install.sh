@@ -426,6 +426,14 @@ setup_command() {
   SHIM=$BIN/boisestate
   ok "Wrote $SHIM"
 
+  # An older boisestate earlier on the PATH would run instead of this one.
+  first=$(PATH=$ORIGINAL_PATH find_cmd boisestate || true)
+  if [ -n "$first" ] &&
+    [ "$(cd -P "$(dirname "$first")" && pwd)" != "$(cd -P "$BIN" && pwd)" ]; then
+    warn "There is another boisestate at $first, ahead of this one on your PATH."
+    NEED_PATH_FIRST=1
+  fi
+
   if on_path "$BIN" && [ "${NEED_PATH_FIRST:-0}" = 0 ]; then
     ok "$BIN is already on your PATH"
     return
