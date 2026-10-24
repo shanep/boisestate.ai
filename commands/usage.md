@@ -1,6 +1,7 @@
 ---
 description: Show this month's boisestate.ai spend and the usage log
 allowed-tools: Bash(boisestate usage)
+disable-model-invocation: true
 ---
 
 !`boisestate usage`

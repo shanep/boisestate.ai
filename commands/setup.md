@@ -1,5 +1,6 @@
 ---
 description: Put the boisestate command on your PATH and check the API key
+disable-model-invocation: true
 ---
 
 Set up the `boisestate` command for the user:
